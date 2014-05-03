@@ -9,6 +9,7 @@ use Ctct\Services\CampaignScheduleService;
 use Ctct\Services\CampaignTrackingService;
 use Ctct\Services\ContactTrackingService;
 use Ctct\Services\ActivityService;
+use Ctct\Services\EventSpotService;
 use Ctct\Components\ResultSet;
 use Ctct\Components\Activities\Activity;
 use Ctct\Components\Contacts\Contact;
@@ -84,7 +85,12 @@ class ConstantContact
      * Handles interaction with account management
      * @var AccountService
      */
-    protected $accountService;
+    protected $accountService;    
+    /**
+     * Handles interaction with account management
+     * @var AccountService
+     */
+    protected $eventSpotService;
 
     /**
      * Class constructor
@@ -102,6 +108,10 @@ class ConstantContact
         $this->campaignScheduleService = new CampaignScheduleService($apiKey);
         $this->listService = new ListService($apiKey);
         $this->accountService = new AccountService($apiKey);
+        $this->eventSpotService = new EventSpotService($apiKey);
+    }
+    public function __destruct(){
+        echo('I am slain!');
     }
 
     /**
@@ -784,6 +794,25 @@ class ConstantContact
     public function addExportContactsActivity($accessToken, ExportContacts $exportContacts)
     {
         return $this->activityService->addExportContactsActivity($accessToken, $exportContacts);
+    }
+
+    /**
+     * @param $accessToken
+     * @param array $params
+     * @return array
+     */
+    public function getEvents($accessToken, array $params = array())
+    {
+        return $this->eventSpotService->getEvents($accessToken, $params);
+    }
+    /**
+     * @param $accessToken
+     * @param array $params
+     * @return array
+     */
+    public function getEvent($accessToken, $eventId)
+    {
+        return $this->eventSpotService->getEvent($accessToken, $eventId);
     }
 
     /**

@@ -54,8 +54,10 @@ class Config
             'contact_tracking_opens' => 'contacts/%s/tracking/opens',
             'contact_tracking_sends' => 'contacts/%s/tracking/sends',
             'contact_tracking_unsubscribes' => 'contacts/%s/tracking/unsubscribes',
-            'contact_tracking_link' => 'contacts/%s/tracking/clicks/%s'
-
+            'contact_tracking_link' => 'contacts/%s/tracking/clicks/%s',
+            'events' =>'eventspot/events',
+            'event' => 'eventspot/events/%s',
+            'events_getRegistrants' => 'eventspot/events/%s/registrants'
         ),
         /**
          * Column names used with bulk activities
