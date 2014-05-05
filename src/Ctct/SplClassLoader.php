@@ -38,6 +38,10 @@ class SplClassLoader
         $this->includePath = $includePath;
     }
 
+    public function __destruct(){
+
+    }
+
     /**
      * Sets the namespace separator used by classes in the namespace of this class loader.
      *

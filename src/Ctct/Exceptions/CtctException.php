@@ -35,4 +35,6 @@ class CtctException extends Exception
     {
         return $this->curlInfo;
     }
+
+    public function __destruct(){}
 }
