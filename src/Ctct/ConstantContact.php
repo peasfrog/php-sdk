@@ -111,7 +111,7 @@ class ConstantContact
         $this->eventSpotService = new EventSpotService($apiKey);
     }
     public function __destruct(){
-        echo('I am slain!');
+        //echo('I am slain!');
     }
 
     /**
@@ -798,23 +798,42 @@ class ConstantContact
 
     /**
      * @param $accessToken
-     * @param array $params
-     * @return array
+     * @param int $limit the max number of elements returned in the list
+     * @return array/json list of events
      */
-    public function getEvents($accessToken, array $params = array())
+    public function getEvents($accessToken, $limit)
     {
-        return $this->eventSpotService->getEvents($accessToken, $params);
+        return $this->eventSpotService->getEvents($accessToken, $limit);
     }
     /**
      * @param $accessToken
-     * @param array $params
-     * @return array
+     * @param $eventId is the ID number of the event
+     * @return event object
      */
     public function getEvent($accessToken, $eventId)
     {
         return $this->eventSpotService->getEvent($accessToken, $eventId);
     }
 
+    /**
+     * @param $accessToken
+     * @param $eventId is the ID number of the event
+     * @return array/object
+     */
+    public function getRegistrants($accessToken, $eventId)
+    {
+        return $this->eventSpotService->getRegistrants($accessToken, $eventId);
+    }
+
+    /**
+     * @param $accessToken
+     * @param $eventId is the ID number of the event
+     * @return array/object
+     */
+    public function getRegistrant($accessToken, $eventId)
+    {
+        return $this->eventSpotService->getRegistrant($accessToken, $eventId, $registrantId);
+    }
     /**
      * Get the id of object, or attempt to convert the argument to an int
      * @param mixed $item - object or a numeric value

@@ -16,16 +16,11 @@ class EventSpotService extends BaseService
     public function getEvents($accessToken, $limit)
     {
         $baseUrl = Config::get('endpoints.base_url')
-            . sprintf(Config::get('endpoints.events_list'));
+            . sprintf(Config::get('endpoints.events'));
 
         $url = $this->buildUrl($baseUrl, $limit);
         $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
         $eventsList = json_decode($response->body, true);
-
-//        foreach (json_decode($response->body, true) as $eventsList) {
-//            $eventsList[] = VerifiedEmailAddress::create($verifiedAddress);
-//        }
-//
         return $eventsList;
     }
     //individual event operations
@@ -47,6 +42,23 @@ class EventSpotService extends BaseService
 
 
     //registrant operations
+    public function getRegistrants($accessToken, $eventId){
+        $baseUrl = Config::get('endpoints.base_url')
+                . sprintf(Config::get('endpoints.events_getRegistrants'), $eventId);
+        $url = $this->buildUrl($baseUrl);
+        $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
+        $registrantsList = json_decode($response->body, true);
+        return $registrantsList;
+    }
+
+    public function getRegistrant($accessToken, $eventId, $registrantId){
+        $baseUrl = Config::get('endpoints.base_url')
+                . sprintf(Config::get('endpoints.events_getRegistrant'), $eventId, $registrantId);
+        $url = $this->buildUrl($baseUrl);
+        $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
+        $registrants = json_decode($response->body, true);
+        return $registrants;
+    }
 
     //promocode operations
 

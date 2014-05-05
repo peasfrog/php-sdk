@@ -18,7 +18,6 @@ class Config
          * REST endpoints
          */
         'endpoints' => array(
-
             'base_url' => 'https://api.constantcontact.com/v2/',
             'account_verified_addresses' => 'account/verifiedemailaddresses',
             'activity' => 'activities/%s',
@@ -57,7 +56,8 @@ class Config
             'contact_tracking_link' => 'contacts/%s/tracking/clicks/%s',
             'events' =>'eventspot/events',
             'event' => 'eventspot/events/%s',
-            'events_getRegistrants' => 'eventspot/events/%s/registrants'
+            'events_getRegistrants' => 'eventspot/events/%s/registrants',
+            'events_getRegistrant' => 'eventspot/events/%s/registrants/%s'
         ),
         /**
          * Column names used with bulk activities
