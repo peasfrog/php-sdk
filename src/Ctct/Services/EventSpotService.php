@@ -25,16 +25,13 @@ class EventSpotService extends BaseService
     }
     //individual event operations
     public function addEvent($accessToken, Array $params){}
-
     public function getEvent($accessToken, $eventId){
         $baseUrl = Config::get('endpoints.base_url') . sprintf(Config::get('endpoints.event'), $eventId);
         $url = $this->buildUrl($baseUrl);
         $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
         return Event::create(json_decode($response->body, true));
     }
-
     public function updateEvent($accessToken, Array $params){}
-
     public function deleteEvent($accessToken, Array $params){}
 
 
@@ -56,8 +53,8 @@ class EventSpotService extends BaseService
                 . sprintf(Config::get('endpoints.events_getRegistrant'), $eventId, $registrantId);
         $url = $this->buildUrl($baseUrl);
         $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
-        $registrants = json_decode($response->body, true);
-        return $registrants;
+        $registrant = json_decode($response->body, true);
+        return $registrant;
     }
 
     //promocode operations

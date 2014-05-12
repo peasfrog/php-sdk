@@ -160,6 +160,6 @@ class Event extends Component{
         $baseUrl = Config::get('endpoints.base_url') . sprintf(Config::get('endpoints.contact'), $eventId);
         $url = $this->buildUrl($baseUrl);
         $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
-        return Contact::create(json_decode($response->body, true));
+        return Event::create(json_decode($response->body, true));
     }
 }

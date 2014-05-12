@@ -830,10 +830,11 @@ class ConstantContact
      * @param $eventId is the ID number of the event
      * @return array/object
      */
-    public function getRegistrant($accessToken, $eventId)
+    public function getRegistrant($accessToken, $eventId, $registrantId)
     {
         return $this->eventSpotService->getRegistrant($accessToken, $eventId, $registrantId);
     }
+
     /**
      * Get the id of object, or attempt to convert the argument to an int
      * @param mixed $item - object or a numeric value
