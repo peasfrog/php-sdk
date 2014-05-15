@@ -111,7 +111,7 @@ class ConstantContact
         $this->eventSpotService = new EventSpotService($apiKey);
     }
     public function __destruct(){
-        //echo('I am slain!');
+        $str = "I am slain!";
     }
 
     /**
