@@ -1,6 +1,5 @@
 <?php
-require_once '../bootstrap
-.php';
+require_once '/bootstrap.php';
 
 use Ctct\Services\AccountService;
 use Ctct\Util\CurlResponse;
