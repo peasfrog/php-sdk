@@ -13,7 +13,6 @@ class Config
      * @var array - array of configuration properties
      */
     private static $props = array(
-
         /**
          * REST endpoints
          */

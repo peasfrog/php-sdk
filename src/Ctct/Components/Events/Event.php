@@ -3,6 +3,8 @@
 namespace Ctct\Components\Events;
 
 use Ctct\Components\Component;
+use Ctct\Components\Contacts\Address;
+
 use Ctct\Components\Events\EventsError;
 
 /**
@@ -14,152 +16,376 @@ use Ctct\Components\Events\EventsError;
  *
  * returns a single event as specified by the id parameter in the get request
  */
+class Event extends Component {
+	//item particulars
+	/**
+	 * Unique ID of the event
+	 * @var string(26)
+	 */
+	public $id;
 
-class Event extends Component{
-    //item particulars
-    public $id;
-    public $name;
-    public $title;
-    public $status;
-    public $type;
-    public $description;
-    public $contact = array();
-    public $start_date;
-    public $end_date;
-    public $created_date;
-    public $time_zone_id;
-    public $is_checkin_available;
-    public $registration_url;
-    public $theme_name;
-    public $currency_type;
+	/**
+	 * The event filename - not visible to registrants
+	 * @var string(100)
+	 */
+	public $name;
 
-    public $online_meeting = array();
-    public $is_virtual_event;
+	/**
+	 * The event title, visible to registrants
+	 * @var string(100)
+	 */
+	public $title;
 
-    public $notification_options = array();
-    public $is_home_page_displayed;
-    public $is_map_displayed;
-    public $is_calendar_displayed;
-    public $is_listed_in_external_directory;
+	/**
+	 * The event status, valid values are:
+	 *   DRAFT
+	 *   ACTIVE - Event is published and publicly accessible
+	 *   COMPLETE - Event has occurred and is complete
+	 *   CANCELLED - Event is no long publicly accessible
+	 *   DELETED
+	 * When an event is published, status transitions from DRAFT to ACTIVE.
+	 * When an event is cancelled, status transitions from ACTIVE to CANCELLED.
+	 * @var string
+	 */
+	public $status;
 
-    public $are_registrants_public;
-    public $track_information = array();
+	/**
+	 * The event type, valid values are:
+	 *  AUCTION,
+	 *  BIRTHDAY,
+	 *  BUSINESS_FINANCE_SALES,
+	 *  CLASSES_WORKSHOPS,
+	 *  COMPETITION_SPORTS
+	 *  CONFERENCES_SEMINARS_FORUM,
+	 *  CONVENTIONS_TRADESHOWS_EXPOS,
+	 *  FESTIVALS_FAIRS, FOOD_WINE,
+	 *  FUNDRAISERS_CHARITIES,
+	 *  HOLIDAY,
+	 *  INCENTIVE_REWARD_RECOGNITION,
+	 *  MOVIES_FILM,
+	 *  MUSIC_CONCERTS,
+	 *  NETWORKING_CLUBS,
+	 *  PERFORMING_ARTS
+	 *  OUTDOORS_RECREATION,
+	 *  RELIGION_SPIRITUALITY,
+	 *  SCHOOLS_REUNIONS_ALUMNI,
+	 *  PARTIES_SOCIAL_EVENTS_MIXERS,
+	 *  TRAVEL,
+	 *  WEBINAR_TELESEMINAR_TELECLASS,
+	 *  WEDDINGS,
+	 *  OTHER
+	 * @var string should be enumerable though.
+	 */
+	public $type;
 
-    //dates
-    public $active_date;
+	/**
+	 * Provide a brief description of the event that will be visible on the event registration form and landing page
+	 * @var string(350)
+	 */
+	public $description;
 
-    public $deleted_date;
+	/**
+	 * The event host's contact information
+	 * @var object
+	 */
+	public $contact = array();
 
-    public $updated_date;
+	/**
+	 * The event start date, in ISO-8601 format
+	 * @var string
+	 */
+	public $start_date;
 
-    //registrants
+	/**
+	 * The event end date, in ISO-8601 format
+	 * @var string
+	 */
+	public $end_date;
 
-    public $total_registered_count;
+	/**
+	 * The event end date, in ISO-8601 format
+	 * @var string
+	 */
+	public $created_date;
 
-    //location
-    public $address = array();
-    public $location;
+	/**
+	 * Time zone in which the event occurs, to see time_zone_id values go here.
+	 * @var string(40)
+	 */
+	public $time_zone_id;
 
-    public $time_zone_description;
+	/**
+	 *Set to true to enable registrant check-in, and indicate that the registrant attended the event; Default is false
+	 * @var boolean
+	 */
+	public $is_checkin_available;
 
-    // social media tracking
-    public $twitter_hashtag;
+	/**
+	 * Points to the event homepage if configured, otherwise points to the event registration page
+	 * @var string(250)
+	 */
+	public $registration_url;
 
-    public $meta_data_tags;
-    public $google_analyitics_key;
+	/**
+	 * The theme_name defines the layout and style (including background and color) for the event invitation, home page, and Registration form, see Event Themes for a list of all available themes; default = Default
+	 * @var string
+	 */
+	public $theme_name;
 
-    //payment
-    public $paypal_account_email;
-    public $payment_options = array();
-    public $payble_to;
-    public $google_merchant_id;
+	/**
+	 * Currency that the account will be paid in; although this is not a required field, it has a default value of USD.
+	 * Valid values are: USD, CAD, AUD, CHF, CZK, DKK, EUR, GBP, HKD, HUF, ILS, JPY, MXN, NOK, NZD, PHP, PLN, SEK, SGD, THB, TWD
+	 * @var string
+	 */
+	public $currency_type;
 
-    public $errors = array();
+	/**
+	 * Online meeting details,
+	 * REQUIRED if is_virtual_event is set to true
+	 * @var array
+	 */
+	public $online_meeting = array();
 
-    /**
-     * Factory method to create a Contact object from an array
-     * @param array $props - Associative array of initial properties to set
-     * @return Contact
-     */
-    public static function create(array $props)
-    {
-        $event = new Event();
-        //item particulars
-        $event->id = parent::getValue($props, "id");
+	/**
+	 * Set to true if this is an online event; Default is false
+	 * @var boolean
+	 */
+	public $is_virtual_event;
 
-        $event->name = parent::getValue($props, "name");
+	/**
+	 * Define whether or not event notifications are sent to the contact email_address, and which notifications.
+	 * @var array
+	 */
+	public $notification_options = array();
 
-        $event->title = parent::getValue($props, "title");
+	/**
+	 *
+	 * @var
+	 */
+	public $is_home_page_displayed;
 
-        $event->description = parent::getValue($props, "description");
+	/**
+	 * Indicates if the event home/landing page is displayed for the event; set to true only if a landing page has
+	 * been created for the event;
+	 * Default is false
+	 * @var
+	 */
+	public $is_map_displayed;
 
-        $event->status = parent::getValue($props, "status");
+	/**
+	 * For future usage,
+	 * Default = true
+	 * @var boolean
+	 */
+	public $is_calendar_displayed;
 
-        $event->type = parent::getValue($props, "type");
+	/**
+	 * Set to true to publish the event in external event directories such as
+	 * SocialVents and EventsInAmerica;
+	 * Default is false
+	 * @var boolean
+	 */
+	public $is_listed_in_external_directory;
 
-        $event->theme_name = parent::getValue($props, "theme_name");
+	/**
+	 * Set to true allows registrants to view others who have registered for
+	 * the event,
+	 * Default is false
+	 * @var boolean
+	 */
+	public $are_registrants_public;
 
-        $event->registration_url = parent::getValue($props, "registration_url");
+	/**
+	 * Use these settings to define the information displayed on the Event registration page
+	 * @var array
+	 */
+	public $track_information = array();
 
-        if (isset($props['online_meeting'])){
-           $event->online_meeting = $props['online_meeting'];
-        }
+	//dates
+	/**
+	 * Date event was published or announced, in ISO-8601 format
+	 * @var string
+	 */
+	public $active_date;
 
-        if(isset($props['notification_options'])){
-            $event->notification_options = $props['notification_options'];
-        }
+	/**
+	 * Date the event was deleted in ISO-8601 format
+	 * @var string
+	 */
+	public $deleted_date;
 
-        $event->is_checkin_available = parent::getValue($props, "is_checkin_available");
+	/**
+	 * Date the event was updated in ISO-8601 format
+	 * @var string
+	 */
+	public $updated_date;
 
-        $event->is_virtual_event = parent::getValue($props, "is_virtual_event");
+	//registrants
+	/**
+	 * Number of event registrants
+	 * @var integer
+	 * This is not functional
+	 */
+	public $total_registered_count;
 
-        $event->is_map_displayed = parent::getValue($props, "is_map_displayed");
+	//location
+	/**
+	 * Address specifying the event location, used to determine event location on map if is_map_displayed set to true.
+	 * @var object
+	 */
+	public $address;
 
-        $event->is_listed_in_external_directory = parent::getValue($props, "is_listed_in_external_directory");
+	/**
+	 * Name of the venue or Location at which the event is being held
+	 * @var string(50)
+	 */
+	public $location;
 
-        $event->is_home_page_displayed = parent::getValue($props, "is_home_page_displayed");
+	/**
+	 * Specify additional text to help describe the event time zone
+	 * @var string(80)
+	 */
+	public $time_zone_description;
 
-        $event->is_calendar_displayed = parent::getValue($props, "is_calendar_displayed");
+	// social media tracking
+	/**
+	 * The event's Twitter hashtag
+	 * @var string(30)
+	 */
+	public $twitter_hashtag;
 
-        if (isset($props['contact'])) {
-            $event->contact = $props['contact'];
-        }
-        $event->start_date = parent::getValue($props, "start_date");
+	/**
+	 * Specify keywords to improve search engine optimization (SEO) for the event; use commas to separate multiple keywords
+	 * @var string(100)
+	 */
+	public $meta_data_tags;
 
-        $event->end_date = parent::getValue($props, "end_date");
+	/**
+	 * Enter the Google analytics key if being used to track the event registration homepage
+	 * @var string(20)
+	 */
+	public $google_analyitics_key;
 
-        $event->created_date = parent::getValue($props, "created_date");
+	//payment
+	/**
+	 * Email address linked to PayPal account to which payments will be made.
+	 * REQUIRED if 'PAYPAL' is selected as a payment option
+	 * @var string(128)
+	 */
+	public $paypal_account_email;
 
-        $event->time_zone_id = parent::getValue($props, "time_zone_id");
-        $event->currency_type = parent::getValue($props, "curreny_type");
-        $event->are_registrants_public = parent::getValue($props, "are_registrants_public");
+	/**
+	 * Specifies the payment options available to registrants
+	 * @var array
+	 */
+	public $payment_options = array();
 
-       if (isset($props["track_information"])){
-           $event->track_information = $props["track_information"];
-       }
+	/**
+	 * Name to which registrants paying by check must make checks payable to.
+	 * REQUIRED if 'CHECK' is selected as a payment option
+	 * @var string(128)
+	 */
+	public $payble_to;
 
-        $event->active_date = parent::getValue($props, "active_date");
+	/**
+	 * Google merchant id to which payments are made.
+	 * Google Checkout is not supported for new events,
+	 * only valid on events created prior to October 2013.
+	 * @var string(20)
+	 * should throw a deprecated warning/error
+	 */
+	public $google_merchant_id;
 
-        $event->deleted_date = parent::getValue($props, "deleted_date");
 
-        $event->updated_date = parent::getValue($props, "updated_date");
+	/**
+	 * Factory method to create a Event object from an array
+	 * @param array $props - Associative array of initial properties to set
+	 * @return Event
+	 */
+	public static function create(array $props) {
+		$event = new Event();
+		//item particulars
+		$event->id = parent::getValue($props, "id");
 
-        $event->total_registered_count = parent::getValue($props, "total_registered_count");
+		$event->name = parent::getValue($props, "name");
 
-        return $event;
-    }
+		$event->title = parent::getValue($props, "title");
 
-    /**
-     * Get contact details for a specific contact
-     * @param string $accessToken - Constant Contact OAuth2 access token
-     * @param int $contactId - Unique contact id
-     * @return Contact
-     */
-    public function getEvent($accessToken, $eventId)
-    {
-        $baseUrl = Config::get('endpoints.base_url') . sprintf(Config::get('endpoints.contact'), $eventId);
-        $url = $this->buildUrl($baseUrl);
-        $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
-        return Event::create(json_decode($response->body, true));
-    }
+		$event->description = parent::getValue($props, "description");
+
+		$event->status = parent::getValue($props, "status");
+
+		$event->type = parent::getValue($props, "type");
+
+		$event->theme_name = parent::getValue($props, "theme_name");
+
+		$event->registration_url = parent::getValue($props, "registration_url");
+
+		if (isset($props['address'])){
+			$event->address = Address::create($props['address']);
+		}
+
+		if (isset($props['online_meeting'])) {
+			$event->online_meeting = $props['online_meeting'];
+		}
+
+		if (isset($props['notification_options'])) {
+			$event->notification_options = $props['notification_options'];
+		}
+
+		if (isset($props['contact'])) {
+			$event->contact = $props['contact'];
+		}
+
+		if (isset($props["track_information"])) {
+			$event->track_information = $props["track_information"];
+		}
+
+		$event->is_checkin_available = parent::getValue($props, "is_checkin_available");
+
+		$event->is_virtual_event = parent::getValue($props, "is_virtual_event");
+
+		$event->is_map_displayed = parent::getValue($props, "is_map_displayed");
+
+		$event->is_listed_in_external_directory = parent::getValue($props, "is_listed_in_external_directory");
+
+		$event->is_home_page_displayed = parent::getValue($props, "is_home_page_displayed");
+
+		$event->is_calendar_displayed = parent::getValue($props, "is_calendar_displayed");
+
+		$event->start_date = parent::getValue($props, "start_date");
+
+		$event->end_date = parent::getValue($props, "end_date");
+
+		$event->created_date = parent::getValue($props, "created_date");
+
+		$event->time_zone_id = parent::getValue($props, "time_zone_id");
+
+		$event->currency_type = parent::getValue($props, "currency_type");
+
+		$event->are_registrants_public = parent::getValue($props, "are_registrants_public");
+
+		$event->active_date = parent::getValue($props, "active_date");
+
+		$event->deleted_date = parent::getValue($props, "deleted_date");
+
+		$event->updated_date = parent::getValue($props, "updated_date");
+
+		$event->total_registered_count = parent::getValue($props, "total_registered_count");
+
+		return $event;
+	}
+
+	/**
+	 * Get event details for a specific event
+	 * @param string $accessToken - Constant Contact OAuth2 access token
+	 * @param int    $eventId     - Unique event id
+	 * @return Event
+	 */
+	public function getEvent($accessToken, $eventId) {
+		$baseUrl = Config::get('endpoints.base_url') . sprintf(Config::get('endpoints.contact'), $eventId);
+		$url = $this->buildUrl($baseUrl);
+		$response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
+		return Event::create(json_decode($response->body, true));
+	}
 }

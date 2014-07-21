@@ -17,26 +17,53 @@ class EventSpotService extends BaseService
     {
         $baseUrl = Config::get('endpoints.base_url')
             . sprintf(Config::get('endpoints.events'));
-
         $url = $this->buildUrl($baseUrl, $limit);
+
         $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
         $eventsList = json_decode($response->body, true);
         return $eventsList;
     }
-    //individual event operations
-    public function addEvent($accessToken, Array $params){}
-    public function getEvent($accessToken, $eventId){
-        $baseUrl = Config::get('endpoints.base_url') . sprintf(Config::get('endpoints.event'), $eventId);
+    public function addEvent($accessToken)
+    {
+        $baseUrl = Config::get('endpoints.base_url')
+            . sprintf(Config::get('endpoints.events'));
         $url = $this->buildUrl($baseUrl);
+
+        $response = parent::getRestClient()->post($url, parent::getHeaders($accessToken));
+        $eventsList = json_decode($response->body, true);
+        return $eventsList;
+    }
+
+    //individual event operations
+    public function getEvent($accessToken, $eventId){
+        $baseUrl = Config::get('endpoints.base_url')
+            . sprintf(Config::get('endpoints.event'), $eventId);
+        $url = $this->buildUrl($baseUrl);
+
         $response = parent::getRestClient()->get($url, parent::getHeaders($accessToken));
         return Event::create(json_decode($response->body, true));
     }
-    public function updateEvent($accessToken, Array $params){}
-    public function deleteEvent($accessToken, Array $params){}
+    public function updateEvent($accessToken, Array $params){
+        $baseUrl = Config::get('endpoints.base_url')
+            . sprintf(Config::get('endpoints.event'), $eventId);
+        $url = $this->buildUrl($baseUrl);
 
+        $response = parent::getRestClient()->put($url, parent::getHeaders($accessToken));
+        return Event::create(json_decode($response->body, true));
+    }
+    public function publishEvent($accessToken, Array $params){
+        $baseUrl = Config::get('endpoints.base_url')
+            . sprintf(Config::get('endpoints.event'), $eventId);
+        $url = $this->buildUrl($baseUrl);
 
+        $response = parent::getRestClient()->patch($url, parent::getHeaders($accessToken));
+        return Event::create(json_decode($response->body, true));
+    }
     //fee operations
 
+    //promocode operations
+
+    //event item operations
 
     //registrant operations
     public function getRegistrants($accessToken, $eventId){
@@ -57,9 +84,7 @@ class EventSpotService extends BaseService
         return $registrant;
     }
 
-    //promocode operations
 
-    //event item operations
 
 
 }

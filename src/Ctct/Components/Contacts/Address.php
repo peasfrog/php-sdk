@@ -37,6 +37,20 @@ class Address extends Component
      */
     public $line3;
 
+	/**
+	 * Latitude coordinates of the event location, not used to determine event
+	 * Location on map if is_map_displayed set to true
+	 * @var number
+	 */
+	public $latitude;
+
+	/**
+	 * Longitude coordinates of the event location, , not used to determine
+	 * event Location at this time on map if is_map_displayed set to true
+	 * @var number
+	 */
+	public $longitude;
+
     /**
      * City info for this address
      * @var string
@@ -85,6 +99,8 @@ class Address extends Component
         $address->line1 = parent::getValue($props, "line1");
         $address->line2 = parent::getValue($props, "line2");
         $address->line3 = parent::getValue($props, "line3");
+		$address->latitude = parent::getValue($props, "latitude");
+        $address->longitude = parent::getValue($props, "longitude");
         $address->city = parent::getValue($props, "city");
         $address->address_type = parent::getValue($props, "address_type");
         $address->state_code = parent::getValue($props, "state_code");
